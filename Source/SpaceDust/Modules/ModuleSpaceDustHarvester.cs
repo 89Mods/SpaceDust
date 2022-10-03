@@ -411,17 +411,16 @@ namespace SpaceDust
     }
     void DoFocusedHarvesting(double scale)
     {
-
-      if (HarvestType == HarvesterType.Atmosphere && part.vessel.atmDensity > 0d)
+      if (HarvestType == HarvesterType.Atmosphere && part.vessel.atmDensity <= 0d)
       {
-        if (part.vessel.atmDensity <= 0d)
-        {
           ScoopUI = Localizer.Format("#LOC_SpaceDust_ModuleSpaceDustHarvester_Field_Scoop_NeedsAtmo");
 
           Fields["ThermalUI"].guiActive = false;
           Fields["IntakeSpeed"].guiActive = false;
           return;
-        }
+      }
+      if (HarvestType == HarvesterType.Atmosphere && part.vessel.atmDensity > 0d)
+      {
         Vector3d worldVelocity = part.vessel.srf_velocity;
         double mach = part.vessel.mach;
 
@@ -465,21 +464,18 @@ namespace SpaceDust
 
         }
         if (ScoopUI == "")
-          ScoopUI = Localizer.Format("#LOC_SpaceDust_ModuleSpaceDustHarvester_Field_Scoop_Resource_None");
+                    ScoopUI = Localizer.Format("#LOC_SpaceDust_ModuleSpaceDustHarvester_Field_Scoop_Resource_None");
       }
 
-
+      if (HarvestType == HarvesterType.Exosphere && part.vessel.atmDensity > 0d)
+      {
+        ScoopUI = Localizer.Format("#LOC_SpaceDust_ModuleSpaceDustHarvester_Field_Scoop_NeedsVacuum");
+        Fields["ThermalUI"].guiActive = false;
+        Fields["IntakeSpeed"].guiActive = false;
+        return;
+      }
       if (HarvestType == HarvesterType.Exosphere && part.vessel.atmDensity == 0d)
       {
-        if (part.vessel.atmDensity > 0d)
-        {
-          ScoopUI = Localizer.Format("#LOC_SpaceDust_ModuleSpaceDustHarvester_Field_Scoop_NeedsVacuum");
-          Fields["ThermalUI"].guiActive = false;
-          Fields["IntakeSpeed"].guiActive = false;
-          return;
-        }
-
-
         Vector3d worldVelocity = part.vessel.obt_velocity;
         Vector3 intakeVector;
         if (HarvestIntakeTransform == null)
